@@ -1,6 +1,7 @@
 import json
 import os
 import random
+from datetime import datetime
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -39,6 +40,42 @@ def save_movies(data):
     with open(MOVIES_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+# ================== STATISTIKA ==================
+STATS_FILE = "statistics.json"
+
+def load_stats():
+    if not os.path.exists(STATS_FILE):
+        return {
+            "users": [],
+            "total_requests": 0,
+            "today": {
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "count": 0
+            }
+        }
+    with open(STATS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_stats(data):
+    with open(STATS_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def update_stats(user_id: int):
+    stats = load_stats()
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    if user_id not in stats["users"]:
+        stats["users"].append(user_id)
+
+    stats["total_requests"] += 1
+
+    if stats["today"]["date"] != today:
+        stats["today"] = {"date": today, "count": 1}
+    else:
+        stats["today"]["count"] += 1
+
+    save_stats(stats)
+
 # ================== AVTOKOD ==================
 def generate_unique_code(movies: dict) -> str:
     while True:
@@ -72,6 +109,8 @@ def admin_menu():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
     kb.row("➕ Kino qo‘shish", "🗑 Kino o‘chirish")
     kb.row("🎬 Qidiruv", "❌ Bekor qilish")
+    kb.row("📊 Statistika")
+    kb.row("📦 Kino backup", "📈 Statistika backup")
     return kb
 
 # ================== FSM ==================
@@ -84,9 +123,10 @@ class DeleteMovie(StatesGroup):
 
 # ================== START ==================
 @dp.message_handler(commands=["start"])
-async def start_cmd(message: types.Message):
-    args = message.get_args()
+async def start_cmd(message: types.Message, state: FSMContext):
+    await state.finish()
 
+    args = message.get_args()
     if args.isdigit():
         message.text = args
         await search_movie(message)
@@ -95,10 +135,7 @@ async def start_cmd(message: types.Message):
     if message.from_user.id in ADMINS:
         await message.answer("👑 <b>Admin panel</b>", reply_markup=admin_menu())
     else:
-        await message.answer(
-            "🎬 Kino kodini yuboring",
-            reply_markup=user_menu()
-        )
+        await message.answer("🎬 Kino kodini yuboring", reply_markup=user_menu())
 
 # ================== QIDIRUV ==================
 @dp.message_handler(lambda m: m.text == "🎬 Qidiruv")
@@ -111,10 +148,7 @@ async def search_btn(message: types.Message):
 async def add_movie_btn(message: types.Message):
     if message.from_user.id not in ADMINS:
         return
-    await message.answer(
-        "📨 1 ta rasm + matnli post yuboring",
-        reply_markup=admin_menu()
-    )
+    await message.answer("📨 Rasm-pasimlarini tashang", reply_markup=admin_menu())
     await AddMovie.post.set()
 
 @dp.message_handler(content_types=types.ContentType.PHOTO, state=AddMovie.post)
@@ -128,12 +162,9 @@ async def add_post(message: types.Message, state: FSMContext):
         post_caption=message.caption or ""
     )
 
-    await message.answer(
-        f"🆔 <b>Kino kodi avtomatik berildi:</b> {code}\n\n🎥 Endi video yuboring"
-    )
+    await message.answer(f"🆔 <b>Kino kodi avtomatik berildi:</b> {code}\n\n🎥 Endi video tashang")
     await AddMovie.video.set()
 
-# ================== VIDEO (DUBLIKAT TEKSHIRUV BOR) ==================
 @dp.message_handler(content_types=types.ContentType.VIDEO, state=AddMovie.video)
 async def add_video(message: types.Message, state: FSMContext):
     movies = load_movies()
@@ -141,12 +172,11 @@ async def add_video(message: types.Message, state: FSMContext):
     new_unique_id = message.video.file_unique_id
     for movie in movies.values():
         if movie.get("video_unique_id") == new_unique_id:
-            await message.answer("❗ Bu kino avval saqlangan")
+            await message.answer("❗ Bu kino borku tog'o")
             await state.finish()
             return
 
     data = await state.get_data()
-
     movies[data["code"]] = {
         "post_file_id": data["post_file_id"],
         "post_caption": data["post_caption"],
@@ -157,14 +187,11 @@ async def add_video(message: types.Message, state: FSMContext):
 
     kb = types.InlineKeyboardMarkup()
     kb.add(
-        types.InlineKeyboardButton("✅ Kanalga yuborish", callback_data=f"send_{data['code']}"),
-        types.InlineKeyboardButton("❌ Yo‘q", callback_data="cancel_send")
+        types.InlineKeyboardButton("✅ Kanalga jo'nataymi", callback_data=f"send_{data['code']}"),
+        types.InlineKeyboardButton("❌ Yo jo'natmayinmi?", callback_data="cancel_send")
     )
 
-    await message.answer(
-        f"✅ Kino saqlandi\n🆔 Kod: {data['code']}\n\nKanalga yuboraymi?",
-        reply_markup=kb
-    )
+    await message.answer(f"✅ Kino saqlandi\n🆔 Kod: {data['code']}\n\nKanalga yuboraymi?", reply_markup=kb)
     await state.finish()
 
 # ================== KANALGA YUBORISH ==================
@@ -179,26 +206,15 @@ async def send_to_channel(call: types.CallbackQuery):
         return
 
     kb = types.InlineKeyboardMarkup()
-    kb.add(
-        types.InlineKeyboardButton(
-            "🎬 Filmni bot orqali ko‘rish",
-            url=f"https://t.me/{BOT_USERNAME}?start={code}"
-        )
-    )
+    kb.add(types.InlineKeyboardButton("🎬 Filmni bot orqali ko‘rish", url=f"https://t.me/{BOT_USERNAME}?start={code}"))
 
     caption = f"{movie['post_caption']}\n\n🆔 Kod: {code}"
 
-    msg = await bot.send_photo(
-        CHANNEL2_ID,
-        movie["post_file_id"],
-        caption,
-        reply_markup=kb
-    )
-
+    msg = await bot.send_photo(CHANNEL2_ID, movie["post_file_id"], caption, reply_markup=kb)
     movies[code]["channel_msg_id"] = msg.message_id
     save_movies(movies)
 
-    await call.message.edit_text("📢 Kanalga yuborildi")
+    await call.message.edit_text("🚀 Kanalga keeetti tog'o")
     await call.answer()
 
 @dp.callback_query_handler(lambda c: c.data == "cancel_send")
@@ -210,10 +226,7 @@ async def cancel_send(call: types.CallbackQuery):
 @dp.message_handler(lambda m: m.text and m.text.isdigit())
 async def search_movie(message: types.Message):
     if not await check_subscription(message.from_user.id):
-        await message.answer(
-            "❗ Avval kanalga obuna bo‘ling",
-            reply_markup=subscribe_kb()
-        )
+        await message.answer("❗ Avval kanalga obuna bo‘ling", reply_markup=subscribe_kb())
         return
 
     movies = load_movies()
@@ -221,20 +234,17 @@ async def search_movie(message: types.Message):
         await message.answer("❌ Bunday kodli kino topilmadi")
         return
 
+    update_stats(message.from_user.id)
     last_movie_request[message.from_user.id] = message.text
 
     kb = types.InlineKeyboardMarkup()
-    kb.add(
-        types.InlineKeyboardButton(
-            "🎬 Filmni ko‘rish",
-            callback_data=f"watch_{message.text}"
-        )
-    )
+    kb.add(types.InlineKeyboardButton("🎬 Filmni ko‘rish", callback_data=f"watch_{message.text}"))
 
     await message.answer_photo(
         movies[message.text]["post_file_id"],
         movies[message.text]["post_caption"],
-        reply_markup=kb
+        reply_markup=kb,
+        protect_content=True
     )
 
 # ================== VIDEO KO‘RISH ==================
@@ -243,32 +253,83 @@ async def watch_movie(call: types.CallbackQuery):
     code = call.data.split("_")[1]
 
     if last_movie_request.get(call.from_user.id) != code:
-        await call.answer("❗ Tugma eskirgan. Faqat oxirgi so'ralgan filmni ko'rishingiz mumkin. Ushbu filmni ko'rish uchun esa kod orqali qayta qidiring yoki kanaldagi bu film posti ostidagi ko'rish tugmasini bosing ", show_alert=True)
+        await call.answer(
+            "❗ Tugma eskirgan. Faqat oxirgi so'ralgan filmni ko'rishingiz mumkin. "
+            "Ushbu filmni ko'rish uchun esa kod orqali qayta qidiring yoki "
+            "kanaldagi bu film posti ostidagi ko'rish tugmasini bosing ",
+            show_alert=True
+        )
         return
 
     if not await check_subscription(call.from_user.id):
-        await call.message.answer(
-            "❗ Avval kanalga obuna bo‘ling",
-            reply_markup=subscribe_kb()
-        )
+        await call.message.answer("❗ Avval kanalga obuna bo‘lingda", reply_markup=subscribe_kb())
         await call.answer()
         return
 
-    await bot.send_video(
-        call.from_user.id,
-        load_movies()[code]["video_file_id"]
-    )
+    await bot.send_video(call.from_user.id, load_movies()[code]["video_file_id"], protect_content=True)
     await call.answer()
+
+# ================== STATISTIKA ==================
+def stats_text():
+    stats = load_stats()
+    movies = load_movies()
+    return (
+        "📊 <b>Bot statistikasi</b>\n\n"
+        f"👥 Bezorilar: <b>{len(stats['users'])}</b>\n"
+        f"🎬 Kinolar: <b>{len(movies)}</b>\n"
+        f"📥 Bugun so‘rovlar: <b>{stats['today']['count']}</b>\n"
+        f"🔢 Jami so‘rovlar: <b>{stats['total_requests']}</b>"
+    )
+
+def stats_kb():
+    kb = types.InlineKeyboardMarkup()
+    kb.add(
+        types.InlineKeyboardButton("🔄 Yangilash", callback_data="stats_refresh"),
+        types.InlineKeyboardButton("❌ Yopish", callback_data="stats_close")
+    )
+    return kb
+
+@dp.message_handler(lambda m: m.text == "📊 Statistika")
+async def show_stats(message: types.Message):
+    if message.from_user.id not in ADMINS:
+        return
+    await message.answer(stats_text(), reply_markup=stats_kb())
+
+@dp.callback_query_handler(lambda c: c.data == "stats_refresh")
+async def refresh_stats(call: types.CallbackQuery):
+    await call.message.edit_text(stats_text(), reply_markup=stats_kb())
+    await call.answer()
+
+@dp.callback_query_handler(lambda c: c.data == "stats_close")
+async def close_stats(call: types.CallbackQuery):
+    await call.message.delete()
+    await call.answer()
+
+# ================== BACKUP ==================
+@dp.message_handler(lambda m: m.text == "📦 Kino backup")
+async def backup_movies(message: types.Message):
+    if message.from_user.id not in ADMINS:
+        return
+    if not os.path.exists(MOVIES_FILE):
+        await message.answer("❌ movies.json topilmadi")
+        return
+    await message.answer_document(types.InputFile(MOVIES_FILE))
+
+@dp.message_handler(lambda m: m.text == "📈 Statistika backup")
+async def backup_stats(message: types.Message):
+    if message.from_user.id not in ADMINS:
+        return
+    if not os.path.exists(STATS_FILE):
+        await message.answer("❌ statistics.json topilmadi")
+        return
+    await message.answer_document(types.InputFile(STATS_FILE))
 
 # ================== KINO O‘CHIRISH ==================
 @dp.message_handler(lambda m: m.text == "🗑 Kino o‘chirish")
 async def del_btn(message: types.Message):
     if message.from_user.id not in ADMINS:
         return
-    await message.answer(
-        "🗑 Kino kodini yuboring",
-        reply_markup=admin_menu()
-    )
+    await message.answer("🗑 Koddi ayting tog'o", reply_markup=admin_menu())
     await DeleteMovie.code.set()
 
 @dp.message_handler(lambda m: m.text.isdigit(), state=DeleteMovie.code)
@@ -277,10 +338,7 @@ async def delete_movie(message: types.Message, state: FSMContext):
     code = message.text.strip()
 
     if code not in movies:
-        await message.answer(
-            "❌ Bunday kino topilmadi",
-            reply_markup=admin_menu()
-        )
+        await message.answer("❌ Bunaqa kino o'zi yo'q tog'o", reply_markup=admin_menu())
         await state.finish()
         return
 
@@ -294,35 +352,24 @@ async def delete_movie(message: types.Message, state: FSMContext):
     del movies[code]
     save_movies(movies)
 
-    await message.answer(
-        f"🗑 Kino o‘chirildi\n🆔 Kod: {code}",
-        reply_markup=admin_menu()
-    )
+    await message.answer(f"🗑 O'chirib tashadim tog'o\n🆔 Kod: {code}", reply_markup=admin_menu())
     await state.finish()
 
 # ================== BEKOR ==================
 @dp.message_handler(lambda m: m.text == "❌ Bekor qilish", state="*")
 async def cancel_all(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.answer(
-        "❎ Bekor qilindi",
-        reply_markup=admin_menu()
-    )
+    await message.answer("❎ Bekor qilindi tog'o", reply_markup=admin_menu())
 
 # ================== OBUNA TEKSHIR ==================
 @dp.callback_query_handler(lambda c: c.data == "check_sub")
 async def recheck(call: types.CallbackQuery):
     if await check_subscription(call.from_user.id):
-        await call.message.edit_text(
-            "✅ Obuna tasdiqlandi. Kod yuboring."
-        )
+        await call.message.edit_text("✅ Obuna tasdiqlandi. Kod yuboring.")
     else:
-        await call.answer(
-            "❌ Hali obuna bo‘lmadingiz",
-            show_alert=True
-        )
+        await call.answer("❌ Hali obuna bo'lmadingizku 😕", show_alert=True)
 
-# ================== USER XATOLI XABAR (YANGI QO‘SHILDI) ==================
+# ================== USER XATOLI XABAR ==================
 @dp.message_handler(
     lambda m: m.from_user.id not in ADMINS,
     content_types=types.ContentType.ANY,
