@@ -3,6 +3,9 @@ import os
 import random
 from datetime import datetime
 
+import aiohttp
+import asyncio
+
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
@@ -22,12 +25,99 @@ MOVIES_FILE = os.getenv("MOVIES_FILE", "movies.json")
 
 ADMINS = [ADMIN_ID]
 
+# ================== RICHADS ENV ==================
+RICHADS_PUBLISHER_ID = os.getenv("RICHADS_PUBLISHER_ID")
+RICHADS_URL = os.getenv("RICHADS_URL", "http://15068.xml.adx1.com/telegram-mb")
+
 # ================== BOT ==================
 bot = Bot(token=BOT_TOKEN, parse_mode="HTML")
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 # ================== XOTIRA ==================
 last_movie_request = {}
+
+# ================== RICHADS XOTIRA ==================
+ads_counter = {}
+
+def need_show_ad(user_id: int, every: int = 3) -> bool:
+    ads_counter[user_id] = ads_counter.get(user_id, 0) + 1
+    return ads_counter[user_id] % every == 0
+
+
+async def get_richads_ad(user_id: int, language_code: str = "ru"):
+    if not RICHADS_PUBLISHER_ID or not RICHADS_URL:
+        return None
+
+    payload = {
+        "language_code": language_code,
+        "publisher_id": str(RICHADS_PUBLISHER_ID),
+        "telegram_id": str(user_id),
+        "production": True
+    }
+
+    try:
+        timeout = aiohttp.ClientTimeout(total=4)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.post(RICHADS_URL, json=payload) as resp:
+                if resp.status != 200:
+                    return None
+
+                data = await resp.json(content_type=None)
+
+                if isinstance(data, list) and len(data) > 0:
+                    return data[0]
+
+                if isinstance(data, dict):
+                    return data
+
+                return None
+
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return None
+    except Exception:
+        return None
+
+
+async def ping_notification_url(notification_url: str):
+    if not notification_url:
+        return
+    try:
+        timeout = aiohttp.ClientTimeout(total=3)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            await session.get(notification_url)
+    except Exception:
+        return
+
+
+async def send_richads_ad(message: types.Message, ad: dict):
+    if not ad:
+        return False
+
+    title = ad.get("title") or ""
+    text = ad.get("message") or ""
+    link = ad.get("link") or ""
+    button = ad.get("button") or "🔗 Ochish"
+    img = ad.get("image_preload") or ad.get("image")
+
+    caption = "📢 Reklama\n\n"
+    if title:
+        caption += f"<b>{title}</b>\n"
+    if text:
+        caption += f"{text}\n"
+
+    kb = None
+    if link:
+        kb = types.InlineKeyboardMarkup()
+        kb.add(types.InlineKeyboardButton(button, url=link))
+
+    try:
+        if img:
+            await message.answer_photo(photo=img, caption=caption, reply_markup=kb)
+        else:
+            await message.answer(caption, reply_markup=kb)
+        return True
+    except Exception:
+        return False
 
 # ================== JSON ==================
 def load_movies():
@@ -265,6 +355,17 @@ async def watch_movie(call: types.CallbackQuery):
         await call.message.answer("❗ Avval kanalga obuna bo‘lingda", reply_markup=subscribe_kb())
         await call.answer()
         return
+
+    # ================== RICHADS (3/1, KINO OLDIDAN) ==================
+    try:
+        if need_show_ad(call.from_user.id, every=3):
+            ad = await get_richads_ad(call.from_user.id, language_code="ru")
+            sent = await send_richads_ad(call.message, ad)
+            if sent and ad:
+                await ping_notification_url(ad.get("notification_url"))
+    except Exception:
+        pass
+    # ================================================================
 
     await bot.send_video(call.from_user.id, load_movies()[code]["video_file_id"], protect_content=True)
     await call.answer()
