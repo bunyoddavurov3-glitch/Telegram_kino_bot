@@ -19,7 +19,7 @@ CHANNEL2_ID = int(os.getenv("CHANNEL2_ID"))
 CHANNEL2_LINK = os.getenv("CHANNEL2_LINK")
 BOT_USERNAME = os.getenv("BOT_USERNAME")
 
-# 🔴 FAFAQAT SHU YER O‘ZGARDI
+# 🔴 VOLUME UCHUN TO‘G‘RI PATH
 MOVIES_FILE = os.getenv("MOVIES_FILE", "/data/movies.json")
 
 ADMINS = [ADMIN_ID]
@@ -32,15 +32,15 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 last_movie_request = {}
 
 # ================== JSON ==================
-# 🔴 Volume uchun xavfsiz init
-os.makedirs(os.path.dirname(MOVIES_FILE), exist_ok=True)
-if not os.path.exists(MOVIES_FILE):
-    with open(MOVIES_FILE, "w", encoding="utf-8") as f:
-        json.dump({}, f, ensure_ascii=False, indent=2)
-
 def load_movies():
-    if not os.path.exists(MOVIES_FILE):
-        return {}
+    try:
+        os.makedirs(os.path.dirname(MOVIES_FILE), exist_ok=True)
+        if not os.path.exists(MOVIES_FILE):
+            with open(MOVIES_FILE, "w", encoding="utf-8") as f:
+                json.dump({}, f, ensure_ascii=False, indent=2)
+    except:
+        pass
+
     with open(MOVIES_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
