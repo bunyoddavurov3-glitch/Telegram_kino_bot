@@ -14,13 +14,20 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
-CHANNEL1_ID = int(os.getenv("CHANNEL1_ID"))
-CHANNEL2_ID = int(os.getenv("CHANNEL2_ID"))
-CHANNEL2_LINK = os.getenv("CHANNEL2_LINK")
-BOT_USERNAME = os.getenv("BOT_USERNAME")
 
-# 🔴 VOLUME UCHUN TO‘G‘RI PATH
-MOVIES_FILE = os.getenv("MOVIES_FILE", "/data/movies.json")
+# Kanal IDlar (UZB bot post tashlaydigan kanallar)
+CHANNEL1_ID = int(os.getenv("BASE_CHANNEL_ID"))           # Baza kanal (K1)
+CHANNEL2_ID = int(os.getenv("BUSINESS_CHANNEL_ID"))       # Biznes kanal (K2)
+
+# Majburiy obuna (2 ta kanal)
+FORCE_SUB_1_ID = int(os.getenv("FORCE_SUB_1_ID"))
+FORCE_SUB_1_LINK = os.getenv("FORCE_SUB_1_LINK")
+
+FORCE_SUB_2_ID = int(os.getenv("FORCE_SUB_2_ID"))
+FORCE_SUB_2_LINK = os.getenv("FORCE_SUB_2_LINK")
+
+BOT_USERNAME = os.getenv("BOT_USERNAME")
+MOVIES_FILE = os.getenv("MOVIES_FILE", "movies.json")
 
 ADMINS = [ADMIN_ID]
 
@@ -33,14 +40,8 @@ last_movie_request = {}
 
 # ================== JSON ==================
 def load_movies():
-    try:
-        os.makedirs(os.path.dirname(MOVIES_FILE), exist_ok=True)
-        if not os.path.exists(MOVIES_FILE):
-            with open(MOVIES_FILE, "w", encoding="utf-8") as f:
-                json.dump({}, f, ensure_ascii=False, indent=2)
-    except:
-        pass
-
+    if not os.path.exists(MOVIES_FILE):
+        return {}
     with open(MOVIES_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -94,15 +95,19 @@ def generate_unique_code(movies: dict) -> str:
 # ================== OBUNA ==================
 async def check_subscription(user_id: int) -> bool:
     try:
-        member = await bot.get_chat_member(CHANNEL2_ID, user_id)
-        return member.status in ("member", "administrator", "creator")
+        member1 = await bot.get_chat_member(FORCE_SUB_1_ID, user_id)
+        member2 = await bot.get_chat_member(FORCE_SUB_2_ID, user_id)
+        ok1 = member1.status in ("member", "administrator", "creator")
+        ok2 = member2.status in ("member", "administrator", "creator")
+        return ok1 and ok2
     except:
         return False
 
 def subscribe_kb():
     kb = types.InlineKeyboardMarkup(row_width=1)
     kb.add(
-        types.InlineKeyboardButton("🔔 Kanalga obuna bo‘lish", url=CHANNEL2_LINK),
+        types.InlineKeyboardButton("🔔 Kanalga obuna bo‘lish", url=FORCE_SUB_1_LINK),
+        types.InlineKeyboardButton("🔔 Kanalga obuna bo‘lish", url=FORCE_SUB_2_LINK),
         types.InlineKeyboardButton("✅ Tekshirish", callback_data="check_sub")
     )
     return kb
@@ -389,6 +394,13 @@ async def user_wrong_input(message: types.Message):
         "🎬 Faqat <b>Qidiruv</b> tugmasidan foydalanishingiz mumkin."
     )
 
-# ================== START ==================
+# ================== START (TO‘G‘RILANDI) ==================
+async def on_startup(dp):
+    await bot.delete_webhook(drop_pending_updates=True)
+
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(
+        dp,
+        skip_updates=True,
+        on_startup=on_startup
+    )
