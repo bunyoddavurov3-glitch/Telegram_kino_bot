@@ -3507,5 +3507,28 @@
       }
     },
     "channel_msg_id": 2235
+  },
+  "7156": {
+    "type": "series",
+    "poster_file_id": "AgACAgIAAx0CSVeMlAACCVBpjBnX0j2_qMV8AzJaKyyqu_oxBAAC7hVrGz3gYEipESIfAAH2hEEBAAMCAAN3AAM6BA",
+    "poster_caption": "🎬 Название: Соник (все фильмы)\n🗣 Язык: русский дубляж\n🎭 Жанр: #фантастика #приключения #комедия #семейный\n\n🎯 Для зрителей, любящих динамичные, весёлые и семейные фильмы.\n⚡ Сверхбыстрый ёжик Соник находит друзей на Земле и вступает в борьбу с гениальными злодеями.\n😂 Каждая часть наполнена юмором, экшеном и темой дружбы.\n✨ Яркая, лёгкая и позитивная атмосфера для зрителей любого возраста.",
+    "episodes": {
+      "1": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCVFpi1qrjBxc4vNDOC7oE5WTRc6eIgAC3T8AAnUP4Eo17vIJr6YDhjoE",
+        "video_unique_id": "AgAD3T8AAnUP4Eo",
+        "title": "Соник  (2020)"
+      },
+      "2": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCVJpi1qr_xSh2u5E6RnAMSFcFVPBEAAC5D8AAnUP4ErmAu9ZzMNruzoE",
+        "video_unique_id": "AgAD5D8AAnUP4Eo",
+        "title": "Соник  в кино (2022)"
+      },
+      "3": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACBL5pil7RfcvClEwrgLQ5m_7PIsAUMQAC7mwAAvshYUmUWfLXFm48SzoE",
+        "video_unique_id": "AgAD7mwAAvshYUk",
+        "title": "Соник"
+      }
+    },
+    "channel_msg_id": 2236
   }
 }
