@@ -1519,14 +1519,6 @@
     "video_unique_id": "AgADk20AAgaUKEg",
     "channel_msg_id": 1952
   },
-  "4354": {
-    "type": "movie",
-    "post_file_id": "AgACAgIAAxkBAAIXU2lo89ejaRg4OCqJyP2GZcB96Y26AAIn-zEbI4U5S1gv_VGQPeh4AQADAgADeQADOAQ",
-    "post_caption": "🎬 Мастер \nДата время 2025\nЖанр: боевик, триллер\nСтрана: США\nЯзык: русский дубляж\n\nБывший морской пехотинец Левон Кейд живёт спокойно, пока не похищают дочь его начальника.\nТеперь он снова берётся за оружие — чтобы спасти её и наказать виновных.",
-    "video_file_id": "BAACAgIAAxkBAAIXVWlo89wK6KhZ7nggwzfluO-wu77cAAIMdQACNWMQSGCC2hYvCNuDOAQ",
-    "video_unique_id": "AgADDHUAAjVjEEg",
-    "channel_msg_id": 1953
-  },
   "7016": {
     "type": "movie",
     "post_file_id": "AgACAgIAAxkBAAIXWWlo8_ZPdd99r5O4ZT5h4rByeQJ0AAIq-zEbI4U5SyxLkQcOaLULAQADAgADeQADOAQ",
@@ -3530,5 +3522,102 @@
       }
     },
     "channel_msg_id": 2236
+  },
+  "2538": {
+    "type": "movie",
+    "post_file_id": "AgACAgIAAxkBAAJUo2mMhYAXHIqPZUVGV5EiA3pinfh7AAK7E2sbPeBoSBFmIA8Ppo2yAQADAgADdwADOgQ",
+    "post_caption": "🎬 Название: Шан-Чи и легенда десяти колец\n🗣 Язык: русский дубляж\n🎭 Жанр: #боевик #фантастика #приключения #marvel\n\n🎯 Для зрителей, любящих восточные боевые искусства и супергеройские истории.\n🐉 Обычный парень сталкивается со своим прошлым и могущественной организацией «Десять колец».\n💥 Древние легенды, семейные тайны и зрелищные поединки в одном эпичном приключении.\n🔥 Яркая, динамичная и атмосферa",
+    "video_file_id": "BAACAgIAAxkBAAJUpWmMhYbciAH0jlb4v8Y9NYdW7hw7AALKLgACu_tAS_76XS2F-q47OgQ",
+    "video_unique_id": "AgADyi4AArv7QEs",
+    "channel_msg_id": 2237
+  },
+  "1944": {
+    "type": "movie",
+    "post_file_id": "AgACAgIAAx0CSVeMlAACCVZpjLFCIpHbb9VYuQoo0wuo-E2-rQACVRlrGz3gaEhoiROfsFkJBgEAAwIAA3cAAzoE",
+    "post_caption": "🎬 Название: Великолепная семёрка  \n🗣 Язык: Узбекский дубляж  \n🎭 Жанр: #вестерн #боевик #приключения  \n\n🎯 Для любителей героических историй о борьбе за справедливость.  \n🔫 Семеро стрелков объединяются, чтобы защитить жителей городка от жестокого тирана.  \n🤠 Атмосфера Дикого Запада, зрелищные перестрелки и дух настоящей отваги.",
+    "video_file_id": "BAACAgIAAx0CSVeMlAACCVdpjLDNsIxnDTvszs03l26rJbvWcQACQ0gAAkktwEuUP2iDKbCGLzoE",
+    "video_unique_id": "AgADQ0gAAkktwEs",
+    "channel_msg_id": 2238
+  },
+  "9777": {
+    "type": "series",
+    "poster_file_id": "AgACAgIAAx0CSVeMlAACCVhpjw6GeIjJjgS3LXMZ1Ndukz-MhwACyBVrG-ZueUiAVfafJ6pF3wEAAwIAA3cAAzoE",
+    "poster_caption": "🎬 Название: Фантастические твари \n🗣 Язык: русский дубляж \n🎭 Жанр: #фэнтези #приключения #боевик  \n\n🎯 Для любителей магического мира и масштабных противостояний волшебников.  \n🪄 Ньют Саламандер и его союзники вступают в борьбу с тёмным магом Грин-де-Вальдом, где с каждой частью ставки становятся выше.  \n✨ Атмосфера магии, тайн и грандиозных битв в мире волшебства.",
+    "episodes": {
+      "1": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCVlpjw7cMImnZ469KFkxax5V90ZbzQACZzIAAhAR2UpIEGy3iXFbsDoE",
+        "video_unique_id": "AgADZzIAAhAR2Uo",
+        "title": "Фантастические твари и где они обитают (2016)"
+      },
+      "2": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCVppjw7nkhA2hR4aemAAAQpyaaefWGwAApMzAAIQEdlKKhOFbZexfOc6BA",
+        "video_unique_id": "AgADkzMAAhAR2Uo",
+        "title": "Фантастические твари: Преступления Грин-де-Вальда (2018)"
+      },
+      "3": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCVtpjw7yPnLXdu2OyNq0TkMtfRmPHQAC8H8AAnCXKElNF7rvsZBjAAE6BA",
+        "video_unique_id": "AgAD8H8AAnCXKEk",
+        "title": "Фантастические Твари: Природоведение (2022)"
+      },
+      "4": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCVxpjw7-IF7W8jYzfHws2dSY3YzZBgACAjkAAoC-wEsvhGJf4cScHDoE",
+        "video_unique_id": "AgADAjkAAoC-wEs",
+        "title": "Фантастические твари: Тайны Дамблдора (2022)"
+      }
+    },
+    "channel_msg_id": 2239
+  },
+  "2226": {
+    "type": "series",
+    "poster_file_id": "AgACAgIAAx0CSVeMlAACCV1pjyvSoRmFqpos72CbM1p5NsNpnwACLBFrG-ZugUg4qOugGai3EAEAAwIAA3kAAzoE",
+    "poster_caption": "🎬 Название: Звёздные войны  \n🗣 Язык: русский  \n🎭 Жанр: #фантастика #приключения #боевик  \n\n🎯 Для любителей масштабных космических саг и легендарных героев.  \n⚔ Вечное противостояние светлой и тёмной стороны Силы решает судьбу всей галактики.  \n🌌 Эпические космические битвы, драматические судьбы и незабываемая атмосфера приключений.\n\n📀 Части:\n1) Звёздные войны: Эпизод I – Скрытая угроза  \n2) Звёздные войны: Эпизод II – Атака клонов  \n3) Звёздные войны: Эпизод III – Месть ситхов  \n4) Звёздные войны: Эпизод IV – Новая надежда  \n5) Звёздные войны: Эпизод V – Империя наносит ответный удар  \n6) Звёздные войны: Эпизод VI – Возвращение джедая  \n7) Звёздные войны: Эпизод VII – Пробуждение силы  \n8) Звёздные войны: Эпизод VIII – Последние джедаи  \n9) Звёздные войны: Эпизод IX – Скайуокер. Восход",
+    "episodes": {
+      "1": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCV5pjywKktuWs3Kbr-uS5G-kM97joQACaToAAu9QQUlGi-5mEq_c7DoE",
+        "video_unique_id": "AgADaToAAu9QQUk",
+        "title": "Звездные войны: Эпизод  – Скрытая угроза (1999)"
+      },
+      "2": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCV9pjywbLXYCGPkdVehH1UxPtOyc_QACpjIAAhiLmUtjzVDrZzW-EDoE",
+        "video_unique_id": "AgADpjIAAhiLmUs",
+        "title": "Звездные войны: Эпизод  – Атака клонов (2002)"
+      },
+      "3": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCWBpjywrCOsrwdz2lDOpQs1oplGx9QACnT4AAoab8UnfAAGTAAFRuTksOgQ",
+        "video_unique_id": "AgADnT4AAoab8Uk",
+        "title": "Звездные войны: Эпизод  – Месть ситхов (2005)"
+      },
+      "4": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCWFpjyw9tBxAA2O2THRa3a4iE3UGjAAC4jYAAk7M8EkU4TjQLdWKJjoE",
+        "video_unique_id": "AgAD4jYAAk7M8Ek",
+        "title": "Звездные войны: Эпизод  – Новая надежда (1977)"
+      },
+      "5": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCWJpjyxUwH9PxL3io_SyuaygoZRTVgACbzYAAufJyErA_YZnxUPocjoE",
+        "video_unique_id": "AgADbzYAAufJyEo",
+        "title": "Звездные войны: Эпизод  – Империя наносит ответный удар (1980)"
+      },
+      "6": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCWNpjyxi1_ejDrWiWhZYvTcbV6yR-wACBTkAAufJyErstkLE-uOkeToE",
+        "video_unique_id": "AgADBTkAAufJyEo",
+        "title": "Звездные войны: Эпизод  – Возвращение Джедая (1983)"
+      },
+      "7": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCWRpjyx2NvnK46M1Ax78cStDOBW5WgACmjQAAufJ0Eo0uLd1Dg47_joE",
+        "video_unique_id": "AgADmjQAAufJ0Eo",
+        "title": "Звездные войны: Пробуждение силы (2015)"
+      },
+      "8": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCWVpjyyTJVxiU_zwa1ch8wds5fJSqgACtDIAAovmiEj1uDO5NeiGKToE",
+        "video_unique_id": "AgADtDIAAovmiEg",
+        "title": "Звездные войны: Последние джедаи (2017)"
+      },
+      "9": {
+        "video_file_id": "BAACAgIAAx0CSVeMlAACCWZpjyyifOoz3ms7nWdqHrPsF4H16AACpTQAAovmiEi2_ZkUIJe3IzoE",
+        "video_unique_id": "AgADpTQAAovmiEg",
+        "title": "Звездные войны: Скайуокер. Восход (2019)"
+      }
+    },
+    "channel_msg_id": 2240
   }
 }
